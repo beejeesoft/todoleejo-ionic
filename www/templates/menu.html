@@ -18,10 +18,28 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close ng-click="login()">
+        <ion-item class="item-divider" ng-if="loggedIn">
+          Container for {{username}}
+        </ion-item>
+        <ion-item ng-repeat="container in containerList" ng-if="loggedIn">
+          {{container.summary}}
+          <!--span class="badge badge-assertive"><{{container.summary}}</span-->
+        </ion-item>
+        <ion-item class="item-divider" ng-if="loggedIn">
+          Functions
+        </ion-item>
+
+        <ion-item menu-close ng-click="login()" ng-if="!loggedIn">
           Login
         </ion-item>
-        <ion-item menu-close href="#/app/search">
+        <ion-item menu-close ng-click="logOut()" ng-if="loggedIn">
+          Logout
+        </ion-item>
+        <ion-item menu-close ng-click="register()" nf-if="!loggedIn">
+          Register
+        </ion-item>
+
+        <!--    <ion-item menu-close href="#/app/search">
           Search
         </ion-item>
         <ion-item menu-close href="#/app/browse">
@@ -30,6 +48,8 @@
         <ion-item menu-close href="#/app/playlists">
           Playlists
         </ion-item>
+
+        -->
       </ion-list>
     </ion-content>
   </ion-side-menu>
