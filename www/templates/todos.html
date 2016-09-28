@@ -1,0 +1,90 @@
+<ion-view>
+  <ion-nav-buttons side="secondary">
+    <div class="buttons">
+      <button class="button button-small button-icon icon ion-plus-circled" ng-click="createTodo()"></button>
+      <button class="button button-small button-icon icon ion-trash-a" ng-click="toggleShowDelete()"></button>
+      <button class="button button-small button-icon icon ion-drag" ng-click="toggleShowReorder()"></button>
+      
+    </div>
+  </ion-nav-buttons>
+
+
+
+  <ion-content>
+
+    <div padding>
+      <button class="button button-clear button-dark" ng-click="taskState = 'open'"><i class="icon ion-clipboard"></i> Open</button>
+      <button class="button button-clear button-dark" ng-click="taskState = 'inProgress'"><i class="icon ion-wrench"></i> In Progress</button>
+      <button class="button button-clear button-dark" ng-click="taskState = 'done'"><i class="icon ion-checkmark"></i> Done</button>
+    </div>
+    <div>
+
+      <!-- Open List -->
+      <ion-list show-delete="shouldShowDelete" show-reorder="shouldShowReorder" can-swipe="true" ng-if="taskState==='open'">
+        <ion-item ng-repeat="todo in todosOpen" on-hold="editTodo(todo,todosOpen)">
+          {{todo.summary}}
+          <ion-option-button class="button button-icon icon ion-edit ion-button-left"></ion-option-button>
+          <ion-option-button class="button button-icon icon ion-chevron-right " ng-click="swipe(todo,todosOpen, 'right',$index)"></ion-option-button>
+          <ion-delete-button class="ion-trash-a " ng-click="deleteTodo(todo,todosOpen, $index) "></ion-delete-button>
+          <ion-reorder-button class="ion-navicon " on-reorder="reorderItem(todo, todosOpen, $fromIndex, $toIndex) "></ion-reorder-button>
+
+        </ion-item>
+      </ion-list>
+
+
+      <!-- In Progress List -->
+      <ion-list show-delete="shouldShowDelete " show-reorder="shouldShowReorder " can-swipe="true " ng-if="taskState==='inProgress'">
+        <ion-item ng-repeat="todo in todosInProgress" on-hold="editTodo(todo,todosInProgress)">
+          {{todo.summary}}
+          <ion-option-button class="button button-icon icon ion-chevron-left" ng-click="swipe(todo, todosInProgress, 'left',$index)"></ion-option-button>
+          <ion-option-button class="button button-icon icon ion-chevron-right" ng-click="swipe(todo, todosInProgress, 'right',$index)"></ion-option-button>
+          <ion-delete-button class="ion-trash-a" ng-click="deleteTodo(todo,$index)"></ion-delete-button>
+          <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(todo, todosInProgress, $fromIndex, $toIndex)"></ion-reorder-button>
+
+        </ion-item>
+      </ion-list>
+
+      <!-- Done List -->
+      <ion-list show-delete="shouldShowDelete" show-reorder="shouldShowReorder" can-swipe="true" ng-if="taskState==='done'">
+        <ion-item ng-repeat=" todo in todosDone" on-hold="editTodo(todo,todosDone)">
+          {{todo.summary}}
+          <ion-option-button class="button button-icon icon ion-chevron-left" ng-click="swipe(todo, todosDone, 'left',$index)"></ion-option-button>
+          <ion-delete-button class="ion-trash-a " ng-click="deleteTodo(todo,todosDone, $index) "></ion-delete-button>
+          <ion-reorder-button class="ion-navicon " on-reorder="reorderItem(todo, todosDone, $fromIndex, $toIndex) "></ion-reorder-button>
+
+        </ion-item>
+      </ion-list>
+
+    </div>
+  </ion-content>
+
+
+
+  <!--
+  <ion-content>
+    
+    <div padding>
+      <button class="button button-small button-clear button-dark " ng-click="taskState='open' "><i class="icon ion-clipboard "></i> Open</button>
+      <button class="button button-small button-clear button-dark " ng-click="taskState='inProgress' "><i class="icon ion-wrench "></i> In Progress</button>
+      <button class="button button-small button-clear button-dark " ng-click="taskState='done' "><i class="icon ion-checkmark "></i> Done</button>
+    </div>
+    <div>
+      <ion-list show-delete="shouldShowDelete " show-reorder="shouldShowReorder " can-swipe="true ">
+        <ion-item ng-repeat="todo in todos | filter : {state: taskState} ">
+          {{todo.summary}}
+
+          <ion-option-button class="button button-icon icon ion-chevron-left " ng-click="swipe(todo, 'left',todos.indexOf(todo)) " ng-if="todo.state==='inProgress' "></ion-option-button>
+          <ion-option-button class="button button-icon icon ion-chevron-right " ng-click="swipe(todo, 'right',todos.indexOf(todo)) " ng-if="todo.state !=='done' "></ion-option-button>
+          <ion-delete-button class="ion-trash-a " ng-click="deleteTodo(todo,$index) "></ion-delete-button>
+          <ion-reorder-button class="ion-navicon " on-reorder="reorderItem(item, $fromIndex, $toIndex) "></ion-reorder-button>
+        </ion-item>
+      </ion-list>
+
+    </div>
+  </ion-content>
+
+
+-->
+
+
+</ion-view>

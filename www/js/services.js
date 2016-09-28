@@ -1,11 +1,10 @@
 'use strict';
 
 angular.module('starter.services', ['ngResource'])
+  //.constant("baseURL", "http://localhost:6001/")
   .constant("baseURL", "https://todoleejo.eu-gb.mybluemix.net/")
 
 .factory('ContainerFactory', ['$resource', 'baseURL', function($resource, baseURL) {
-
-    
 
   return $resource(baseURL + "containers/", null, {
     'update': {
@@ -18,7 +17,28 @@ angular.module('starter.services', ['ngResource'])
   });
 }])
 
+.factory('ToDoFactory', ['$resource', 'baseURL', function($resource, baseURL) {
 
+  return $resource(baseURL + "todos/", null, {
+     'update': {
+      method: 'PUT'
+    },
+    'query': {
+      method: 'GET',
+      isArray: true
+    }
+  });
+}])
+
+.factory('TransitionFactory', ['$resource', 'baseURL', function($resource, baseURL){
+
+    return $resource(baseURL + "todos/transition", null, {
+      'update' : {
+        method: 'PUT'
+      }
+    });
+
+}])
 
 
 .factory('$localStorage', ['$window', function($window) {
@@ -39,6 +59,24 @@ angular.module('starter.services', ['ngResource'])
       return JSON.parse($window.localStorage[key] || defaultValue);
     }
   }
+}])
+
+.factory('DebugFactory', ['$ionicPlatform', '$cordovaToast', function($ionicPlatform, $cordovaToast) {
+  var debugFac = {};
+
+  debugFac.debug = function(message) {
+    $ionicPlatform.ready(function() {
+      $cordovaToast
+        .show(message, 'long', 'bottom')
+        .then(function(success) {
+          // success
+        }, function(error) {
+          // error
+        });
+    });
+  };
+
+  return debugFac;
 }])
 
 .factory('AuthFactory', ['$resource', '$http', '$localStorage', '$rootScope', 'baseURL', '$ionicPopup', function($resource, $http, $localStorage, $rootScope, baseURL, $ionicPopup) {

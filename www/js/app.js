@@ -40,6 +40,7 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
     console.log('done');
     $rootScope.$broadcast('loading:hide');
   });
+
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -52,42 +53,57 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
     controller: 'AppCtrl'
   })
 
-  .state('app.search', {
-    url: '/search',
+  .state('app.todos', {
+    url: '/todos/:containerId',
+    cache: false,
     views: {
       'menuContent': {
-        templateUrl: 'templates/search.html'
+        templateUrl: 'templates/todos.html',
+        controller: 'ToDoController'
       }
     }
   })
 
-  .state('app.browse', {
-      url: '/browse',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/browse.html'
-        }
+  .state('app.start', {
+    url: '/start',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/start.html',
+        //controller: 'AppCtrl'
       }
-    })
-    .state('app.playlists', {
-      url: '/playlists',
+    }
+
+  });
+  /*
+    .state('app.search', {
+      url: '/search',
       views: {
         'menuContent': {
-          templateUrl: 'templates/playlists.html',
-          controller: 'PlaylistsCtrl'
+          templateUrl: 'templates/search.html'
         }
       }
     })
 
-  .state('app.single', {
-    url: '/playlists/:playlistId',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistCtrl'
+    .state('app.browse', {
+        url: '/browse',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/browse.html'
+          }
+        }
+      })
+
+
+    .state('app.single', {
+      url: '/playlists/:playlistId',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/playlist.html',
+          controller: 'PlaylistCtrl'
+        }
       }
-    }
-  });
+      */
+
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('/app/start');
 });

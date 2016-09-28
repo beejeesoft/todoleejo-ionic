@@ -1,0 +1,28 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Create a new ToDo</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeToDoCreateForm()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form id="todoCreateForm" name="todoCreateForm" ng-submit="submitCreate()">
+      <div class="list">
+
+        <label class="item item-input">
+          <span class="input-label">Summary</span>
+          <input type="text" ng-model="todoData.summary">
+        </label>
+
+
+        <label class="item item-input">
+          <span class="input-label">Description</span>
+          <textarea type="text" ng-model="todoData.description"></textarea>
+        </label>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">Submit</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</ion-modal-view>
