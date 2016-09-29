@@ -1,28 +1,38 @@
 <ion-modal-view>
   <ion-header-bar>
-    <h1 class="title">Create a new ToDo</h1>
+    <h1 class="title">Create ToDo</h1>
     <div class="buttons">
-      <button class="button button-clear" ng-click="closeToDoCreateForm()">Close</button>
+      <button class="button button-icon icon button-clear button-dark ion-close" ng-click="doCloseCreateForm()"></button>
+      <button class="button button-icon icon button-clear button-dark ion-checkmark" ng-click="doSubmitCreate()"></button>
     </div>
   </ion-header-bar>
   <ion-content>
-    <form id="todoCreateForm" name="todoCreateForm" ng-submit="submitCreate()">
+    <form id="createForm" name="createForm" ng-submit="doSubmitCreate()">
+
       <div class="list">
 
         <label class="item item-input">
-          <span class="input-label">Summary</span>
-          <input type="text" ng-model="todoData.summary">
+           <input type="text" placeholder='Summary' ng-model="createTodoModel.summary">
         </label>
-
 
         <label class="item item-input">
-          <span class="input-label">Description</span>
-          <textarea type="text" ng-model="todoData.description"></textarea>
+          <textarea type="text" placeholder='Description' rows=5 ng-model="createTodoModel.description"></textarea>
         </label>
-        <label class="item">
-          <button class="button button-block button-positive" type="submit">Submit</button>
+
+        <label class="item item-input">
+          <span class="input-label">Create another</span>
+          <ion-checkbox color="dark" ng-model="createTodoModel.createAnother"></ion-checkbox>
         </label>
+
       </div>
+
+      <div class="bar bar-footer bar-dark">
+        <button class="button button-full button-dark" type="submit">Save</button>
+      </div>
+
+
+
+
     </form>
   </ion-content>
 </ion-modal-view>

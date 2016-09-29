@@ -5,8 +5,7 @@
       </ion-nav-back-button>
 
       <ion-nav-buttons side="left">
-        <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
-        </button>
+        <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
       </ion-nav-buttons>
     </ion-nav-bar>
     <ion-nav-view name="menuContent"></ion-nav-view>
@@ -14,34 +13,33 @@
 
   <ion-side-menu side="left">
     <ion-header-bar class="bar-stable">
-      <h1 class="title">Navigation</h1>
-
+      <h1 class="title">Container</h1>
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item class="item-divider" ng-if="loggedIn">
-          Container for {{username}}
+        <ion-item class="item-divider color=" dark " ng-if="loggedIn ">
+          User: {{username}}
         </ion-item>
-        <ion-item menu-close ng-repeat="container in containerList" ng-if="loggedIn" 
-        href="#/app/todos/{{container._id}}">
+         <ion-item menu-close class="button button-icon icon ion-folder " ng-if="loggedIn " href="'#/app/containers' ">Manage</ion-item>
+        <ion-item menu-close ng-repeat="container in containerList " ng-if="loggedIn " href="#/app/todos/{{container._id}} ">
           {{container.summary}}
-          <!--span class="badge badge-assertive"><{{container.summary}}</span-->
-        </ion-item>
-        <ion-item class="item-divider" ng-if="loggedIn">
-          Functions
         </ion-item>
 
-        <ion-item menu-close ng-click="login()" ng-if="!loggedIn">
+        <ion-item class="item-divider " color="dark " ng-if="loggedIn ">
+          Admin Functions
+        </ion-item>
+
+        <ion-item menu-close ng-click="login() " ng-if="!loggedIn ">
           Login
         </ion-item>
-        <ion-item menu-close ng-click="logOut()" ng-if="loggedIn">
+        <ion-item menu-close ng-click="logOut() " ng-if="loggedIn ">
           Logout
         </ion-item>
-        <ion-item menu-close ng-click="register()" nf-if="!loggedIn">
+        <ion-item menu-close ng-click="register() " nf-if="!loggedIn ">
           Register
         </ion-item>
 
-      
+
       </ion-list>
     </ion-content>
   </ion-side-menu>

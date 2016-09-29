@@ -53,6 +53,17 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
     controller: 'AppCtrl'
   })
 
+  .state('app.containers', {
+    url: '/containers',
+    cache: false,
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/containers.html',
+        controller: 'ContainerController'
+      }
+    }
+  })
+
   .state('app.todos', {
     url: '/todos/:containerId',
     cache: false,

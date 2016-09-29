@@ -1,0 +1,28 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Change ToDo</h1>
+    <div class="buttons">
+      <button class="button button-icon icon button-clear button-dark ion-close" ng-click="doCloseEditForm()"></button>
+      <button class="button button-icon icon button-clear button-dark ion-checkmark" ng-click="doSubmitChange()"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form id="changeForm" name="changeForm" ng-submit="doSubmitChange()">
+      <div class="list">
+
+        <label class="item item-input">
+           <input type="text" placeholder='Summary' ng-model="editTodoModel.summary">
+        </label>
+
+        <label class="item item-input">
+          <textarea type="text" placeholder='Description' rows=5 ng-model="editTodoModel.description"></textarea>
+        </label>
+
+      </div>
+      <div class="bar bar-footer bar-dark">
+        <button class="button button-full button-dark" type="submit">Save</button>
+      </div>
+
+    </form>
+  </ion-content>
+</ion-modal-view>

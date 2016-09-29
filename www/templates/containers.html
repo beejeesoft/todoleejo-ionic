@@ -1,0 +1,30 @@
+<ion-view>
+
+
+  <ion-nav-buttons side="secondary">
+    <div class="buttons">
+      <button class="button button-small button-icon icon ion-trash-a" ng-click="toggleShowDelete()"></button>
+    </div>
+  </ion-nav-buttons>
+
+
+
+  <ion-content>
+
+   
+    <div>
+
+      <ion-list show-delete="shouldShowDelete" can-swipe="true">
+        <ion-item ng-repeat="container in containerList" on-hold="doEditContainer(container)">
+          {{container.summary}}
+          <ion-delete-button class="ion-trash-a" ng-click="doDeleteTodo(todo,todosOpen, $index)"></ion-delete-button>
+        </ion-item>
+      </ion-list>
+
+
+    </div>
+  </ion-content>
+
+
+
+</ion-view>

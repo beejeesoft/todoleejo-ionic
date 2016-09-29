@@ -13,30 +13,40 @@ angular.module('starter.services', ['ngResource'])
     'query': {
       method: 'GET',
       isArray: true
+    },
+    'save': {
+      method: 'POST'
     }
+
   });
 }])
 
 .factory('ToDoFactory', ['$resource', 'baseURL', function($resource, baseURL) {
 
   return $resource(baseURL + "todos/", null, {
-     'update': {
+    'update': {
       method: 'PUT'
     },
     'query': {
       method: 'GET',
       isArray: true
+    },
+    'save': {
+      method: 'POST'
+    },
+    'delete': {
+      method: 'DELETE'
     }
   });
 }])
 
-.factory('TransitionFactory', ['$resource', 'baseURL', function($resource, baseURL){
+.factory('TransitionFactory', ['$resource', 'baseURL', function($resource, baseURL) {
 
-    return $resource(baseURL + "todos/transition", null, {
-      'update' : {
-        method: 'PUT'
-      }
-    });
+  return $resource(baseURL + "todos/transition", null, {
+    'update': {
+      method: 'PUT'
+    }
+  });
 
 }])
 

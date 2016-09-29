@@ -1,10 +1,11 @@
 <ion-view>
+
+
   <ion-nav-buttons side="secondary">
     <div class="buttons">
-      <button class="button button-small button-icon icon ion-plus-circled" ng-click="createTodo()"></button>
+      <button class="button button-small button-icon icon ion-plus-circled" ng-click="doCreateTodo()"></button>
       <button class="button button-small button-icon icon ion-trash-a" ng-click="toggleShowDelete()"></button>
       <button class="button button-small button-icon icon ion-drag" ng-click="toggleShowReorder()"></button>
-      
     </div>
   </ion-nav-buttons>
 
@@ -21,36 +22,38 @@
 
       <!-- Open List -->
       <ion-list show-delete="shouldShowDelete" show-reorder="shouldShowReorder" can-swipe="true" ng-if="taskState==='open'">
-        <ion-item ng-repeat="todo in todosOpen" on-hold="editTodo(todo,todosOpen)">
+        <ion-item ng-repeat="todo in todosOpen" on-hold="doEditTodo(todo,todosOpen)">
           {{todo.summary}}
-          <ion-option-button class="button button-icon icon ion-edit ion-button-left"></ion-option-button>
-          <ion-option-button class="button button-icon icon ion-chevron-right " ng-click="swipe(todo,todosOpen, 'right',$index)"></ion-option-button>
-          <ion-delete-button class="ion-trash-a " ng-click="deleteTodo(todo,todosOpen, $index) "></ion-delete-button>
-          <ion-reorder-button class="ion-navicon " on-reorder="reorderItem(todo, todosOpen, $fromIndex, $toIndex) "></ion-reorder-button>
+          <ion-option-button class="button button-icon icon ion-folder ion-button-left" ng-click="doConvertTodo(todo,todosOpen,index)"></ion-option-button>
+          <ion-option-button class="button button-icon icon ion-chevron-right " ng-click="doSwipe(todo,todosOpen, 'right',$index)"></ion-option-button>
+          <ion-delete-button class="ion-trash-a" ng-click="doDeleteTodo(todo,todosOpen, $index)"></ion-delete-button>
+          <ion-reorder-button class="ion-navicon" on-reorder="doReorderItem(todo, todosOpen, $fromIndex, $toIndex) "></ion-reorder-button>
 
         </ion-item>
       </ion-list>
 
 
-      <!-- In Progress List -->
-      <ion-list show-delete="shouldShowDelete " show-reorder="shouldShowReorder " can-swipe="true " ng-if="taskState==='inProgress'">
-        <ion-item ng-repeat="todo in todosInProgress" on-hold="editTodo(todo,todosInProgress)">
+      <!-- In Progress List --> 
+      <ion-list show-delete="shouldShowDelete" show-reorder="shouldShowReorder " can-swipe="true " ng-if="taskState==='inProgress'">
+        <ion-item ng-repeat="todo in todosInProgress" on-swipe-up="doConvertTodo()" on-hold="doEditTodo(todo,todosInProgress)">
           {{todo.summary}}
-          <ion-option-button class="button button-icon icon ion-chevron-left" ng-click="swipe(todo, todosInProgress, 'left',$index)"></ion-option-button>
-          <ion-option-button class="button button-icon icon ion-chevron-right" ng-click="swipe(todo, todosInProgress, 'right',$index)"></ion-option-button>
-          <ion-delete-button class="ion-trash-a" ng-click="deleteTodo(todo,$index)"></ion-delete-button>
-          <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(todo, todosInProgress, $fromIndex, $toIndex)"></ion-reorder-button>
+          <ion-option-button class="button button-icon icon ion-folder ion-button-left" ng-click="doConvertTodo(todo,todosInProgress,index)"></ion-option-button>
+          <ion-option-button class="button button-icon icon ion-chevron-left" ng-click="doSwipe(todo, todosInProgress, 'left',$index)"></ion-option-button>
+          <ion-option-button class="button button-icon icon ion-chevron-right" ng-click="doSwipe(todo, todosInProgress, 'right',$index)"></ion-option-button>
+          <ion-delete-button class="ion-trash-a" ng-click="doDeleteTodo(todo,$index)"></ion-delete-button>
+          <ion-reorder-button class="ion-navicon" on-reorder="doReorderItem(todo, todosInProgress, $fromIndex, $toIndex)"></ion-reorder-button>
 
         </ion-item>
       </ion-list>
 
       <!-- Done List -->
       <ion-list show-delete="shouldShowDelete" show-reorder="shouldShowReorder" can-swipe="true" ng-if="taskState==='done'">
-        <ion-item ng-repeat=" todo in todosDone" on-hold="editTodo(todo,todosDone)">
+        <ion-item ng-repeat=" todo in todosDone" on-swipe-up="doConvertTodo()" on-hold="doEditTodo(todo,todosDone)">
           {{todo.summary}}
-          <ion-option-button class="button button-icon icon ion-chevron-left" ng-click="swipe(todo, todosDone, 'left',$index)"></ion-option-button>
-          <ion-delete-button class="ion-trash-a " ng-click="deleteTodo(todo,todosDone, $index) "></ion-delete-button>
-          <ion-reorder-button class="ion-navicon " on-reorder="reorderItem(todo, todosDone, $fromIndex, $toIndex) "></ion-reorder-button>
+          <ion-option-button class="button button-icon icon ion-folder ion-button-left" ng-click="doConvertTodo(todo,todosDone,index)"></ion-option-button>
+          <ion-option-button class="button button-icon icon ion-chevron-left" ng-click="doSwipe(todo, todosDone, 'left',$index)"></ion-option-button>
+          <ion-delete-button class="ion-trash-a " ng-click="doDeleteTodo(todo,todosDone, $index) "></ion-delete-button>
+          <ion-reorder-button class="ion-navicon " on-reorder="doReorderItem(todo, todosDone, $fromIndex, $toIndex) "></ion-reorder-button>
 
         </ion-item>
       </ion-list>
