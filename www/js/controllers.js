@@ -234,298 +234,338 @@ angular.module('starter.controllers', [])
   }
 ])
 
-.controller('ToDoController', ['$scope', '$rootScope', 'baseURL', 'ToDoFactory', '$state', '$stateParams', 'DebugFactory', 'TransitionFactory', '$ionicModal', '$ionicPopup', 'ContainerFactory', function($scope, $rootScope, baseURL, ToDoFactory, $state, $stateParams, DebugFactory, TransitionFactory, $ionicModal, $ionicPopup, ContainerFactory) {
+.controller('ToDoController', ['$scope', '$rootScope', 'baseURL', 'ToDoFactory', '$state', '$stateParams', 'DebugFactory', 'TransitionFactory', '$ionicModal', '$ionicPopup', 'ContainerFactory',
+  function($scope, $rootScope, baseURL, ToDoFactory, $state, $stateParams, DebugFactory, TransitionFactory, $ionicModal, $ionicPopup, ContainerFactory) {
 
-  $scope.baseURL = baseURL;
+    $scope.baseURL = baseURL;
 
-  // We start with the open tab visible
-  $scope.taskState = 'open';
+    // We start with the open tab visible
+    $scope.taskState = 'open';
 
-  // Markers for showing the buttons in the nav bar
-  $scope.shouldShowDelete = false;
-  $scope.shouldShowReorder = false;
+    // Markers for showing the buttons in the nav bar
+    $scope.shouldShowDelete = false;
+    $scope.shouldShowReorder = false;
 
-  // toggle the buttons visibility onoff
-  $scope.toggleShowDelete = function() {
-    $scope.shouldShowDelete = !$scope.shouldShowDelete;
-  };
+    // toggle the buttons visibility onoff
+    $scope.toggleShowDelete = function() {
+      $scope.shouldShowDelete = !$scope.shouldShowDelete;
+    };
 
-  $scope.toggleShowReorder = function() {
-    $scope.shouldShowReorder = !$scope.shouldShowReorder;
-  };
-
-
-  // This really hurts. Instead of having all todos in one list and 
-  // using a filter I have to split them because using filters destroys the
-  // index that is delivered by delete or reorder operations on lists.
-  // so we seperate them. 
-  $scope.todosOpen = [];
-  $scope.todosInProgress = [];
-  $scope.todosDone = [];
-
-  // Dev helpers
-  var logInfo = function(info) {
-    DebugFactory.debug("Info " + JSON.stringify(info));
-  }
-  var logError = function(error) {
-    DebugFactory.debug("Error: " + JSON.stringify(errror));
-  };
+    $scope.toggleShowReorder = function() {
+      $scope.shouldShowReorder = !$scope.shouldShowReorder;
+    };
 
 
-  /**
-   * Does the split from the server response according to the
-   * state of each todo. At the moment we are not interested in
-   * deleted items.
-   */
-  var filterToResultLists = function(list) {
+    // This really hurts. Instead of having all todos in one list and 
+    // using a filter I have to split them because using filters destroys the
+    // index that is delivered by delete or reorder operations on lists.
+    // so we seperate them. 
+    $scope.todosOpen = [];
+    $scope.todosInProgress = [];
+    $scope.todosDone = [];
 
-    for (var i = 0; i < list.length; i++) {
-      if (list[i].state === 'open') {
-        $scope.todosOpen.push(list[i]);
-      } else if (list[i].state === 'inProgress') {
-        $scope.todosInProgress.push(list[i]);
-      } else if (list[i].state === 'done') {
-        $scope.todosDone.push(list[i]);
+    // Dev helpers
+    var logInfo = function(info) {
+      DebugFactory.debug("Info " + JSON.stringify(info));
+    };
+    var logError = function(error) {
+      DebugFactory.debug("Error: " + JSON.stringify(errror));
+    };
+
+
+    /**
+     * Does the split from the server response according to the
+     * state of each todo. At the moment we are not interested in
+     * deleted items.
+     */
+    var filterToResultLists = function(list) {
+
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].state === 'open') {
+          $scope.todosOpen.push(list[i]);
+        } else if (list[i].state === 'inProgress') {
+          $scope.todosInProgress.push(list[i]);
+        } else if (list[i].state === 'done') {
+          $scope.todosDone.push(list[i]);
+        }
       }
-    }
-  };
+    };
 
-  // After create/update operations we have to put the
-  // todo in the right list. 
-  var stateListAdd = function(todo) {
-    getStateList(todo).push(todo);
-  };
+    // After create/update operations we have to put the
+    // todo in the right list. 
+    var stateListAdd = function(todo) {
+      getStateList(todo).push(todo);
+    };
 
-  var stateListRemove = function(todo, index) {
-    getStateList(todo).splice(index, 1);
-  };
+    var stateListRemove = function(todo, index) {
+      getStateList(todo).splice(index, 1);
+    };
 
-  var getStateList = function(todo) {
-    if (todo.state === 'open') return $scope.todosOpen;
-    else if (todo.state === 'inProgress') return $scope.todosInProgress;
-    else if (todo.state === 'done') return $scope.todosDone;
-  };
-
-
-  // Calling get for the selected container on startup
-  // loading all of the todos belonging to this container and the logged in user
-  ToDoFactory.query({
-    containerId: $stateParams.containerId
-  }, function(todos) {
-    filterToResultLists(todos);
-  }, function(error) {
-    DebugFactory.debug('Error loading todos: ' + JSON.stringify(error));
-  });
-
-  // setting the selected container
-  $rootScope.selectedContainerId = $stateParams.containerId;
+    var getStateList = function(todo) {
+      if (todo.state === 'open') return $scope.todosOpen;
+      else if (todo.state === 'inProgress') return $scope.todosInProgress;
+      else if (todo.state === 'done') return $scope.todosDone;
+    };
 
 
-  // if arrows are pressed then we have to transfer the
-  // todo in the appropriate state.
-  $scope.doSwipe = function(todo, list, direction, index) {
-    // Remove the element from list for the duration of the update
-    list.splice(index, 1);
-    //DebugFactory.debug("SWIPE : " + direction + " ..." + index + " ..." + JSON.stringify(todo.summary));
+    // Calling get for the selected container on startup
+    // loading all of the todos belonging to this container and the logged in user
+    ToDoFactory.query({
+      containerId: $stateParams.containerId
+    }, function(todos) {
+      filterToResultLists(todos);
+    }, function(error) {
+      DebugFactory.debug('Error loading todos: ' + JSON.stringify(error));
+    });
 
-    // Call the server to do the transition
-    TransitionFactory.update({
-        id: todo._id
-      }, {
-        'todoId': todo._id,
-        'direction': direction
-      },
-      function(response) {
-        //DebugFactory.debug('Successfully called');
-        // Server updated the todo so lets put it into the right list.
-        stateListAdd(response);
-      },
-      function(error) {
-        DebugFactory.debug('Error calling transition:' + JSON.stringify(error));
-        // Reload the list if something goes wrong on the way
-        $state.go($state.current, null, {
-          reload: true
+    // setting the selected container
+    $rootScope.selectedContainerId = $stateParams.containerId;
+
+
+    // if arrows are pressed then we have to transfer the
+    // todo in the appropriate state.
+    $scope.doSwipe = function(todo, list, direction, index) {
+      // Remove the element from list for the duration of the update
+      list.splice(index, 1);
+      //DebugFactory.debug("SWIPE : " + direction + " ..." + index + " ..." + JSON.stringify(todo.summary));
+
+      // Call the server to do the transition
+      TransitionFactory.update({
+          id: todo._id
+        }, {
+          'todoId': todo._id,
+          'direction': direction
+        },
+        function(response) {
+          //DebugFactory.debug('Successfully called');
+          // Server updated the todo so lets put it into the right list.
+          stateListAdd(response);
+        },
+        function(error) {
+          DebugFactory.debug('Error calling transition:' + JSON.stringify(error));
+          // Reload the list if something goes wrong on the way
+          $state.go($state.current, null, {
+            reload: true
+          });
         });
-      });
 
-  };
+    };
 
-  /**
-   * Moving around the list items by swapping their places
-   */
-  $scope.doReorderItem = function(item, list, fromIndex, toIndex) {
-    list.splice(toIndex, 0, list.splice(fromIndex, 1)[0]);
-  };
-
-
-  /**
-   * Modal Dialogs
-   * Create and Edit
-   */
-
-  // Create the create modal that we will use on create
-  $ionicModal.fromTemplateUrl('templates/todocreate.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.createModal = modal;
-  });
-
-  // Create the create modal that we will use on create
-  $ionicModal.fromTemplateUrl('templates/todoedit.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.editModal = modal;
-  });
+    /**
+     * Moving around the list items by swapping their places
+     */
+    $scope.doReorderItem = function(item, list, fromIndex, toIndex) {
+      list.splice(toIndex, 0, list.splice(fromIndex, 1)[0]);
+    };
 
 
-  // Scope Model used in the create modal dialog
-  $scope.createTodoModel = {};
+    /**
+     * Modal Dialogs
+     * Create and Edit
+     */
 
-  // Scope Model used in the edit modal dialog
-  $scope.editTodoModel = {};
-  $scope.editIndex = -1;
-  $scope.editList = {};
+    // Create the create modal that we will use on create
+    $ionicModal.fromTemplateUrl('templates/todocreate.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.createModal = modal;
+    });
 
-  var resetEditScope = function() {
+    // Create the create modal that we will use on create
+    $ionicModal.fromTemplateUrl('templates/todoedit.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.editModal = modal;
+    });
+
+
+    // Scope Model used in the create modal dialog
+    $scope.createTodoModel = {};
+
+    // Scope Model used in the edit modal dialog
     $scope.editTodoModel = {};
     $scope.editIndex = -1;
     $scope.editList = {};
-  };
+
+    // Checkbox models
+    // To which container does a task belong
+    $scope.parents = [];
+    $scope.selection = [];
+
+    var resetEditScope = function() {
+      $scope.editTodoModel = {};
+      $scope.editIndex = -1;
+      $scope.editList = {};
+      $scope.parents = [];
+      $scope.selection = [];
+    };
 
 
 
-  /**
-   * Edit a todo
-   */
-  $scope.doEditTodo = function(todo, list, index) {
-    DebugFactory.debug("EDIT : " + index + " ..." + todo.summary);
-    $scope.editTodoModel = angular.copy(todo);
-    $scope.editIndex = index;
-    $scope.editList = list;
-    $scope.editModal.show();
-  };
+    $scope.toggleSelection = function toggleSelection(id) {
+      DebugFactory.debug("Param:" + id);
+      var idx = $scope.selection.indexOf(id);
+      // is currently selected
+      if (idx > -1) {
+        $scope.selection.splice(idx, 1);
+      }
+
+      // is newly selected
+      else {
+        $scope.selection.push(id);
+      }
+    };
+
+    /**
+     * Edit a todo
+     */
+    $scope.doEditTodo = function(todo, list, index) {
 
 
-  // If the edit modal submits changes
-  $scope.doSubmitChanges = function() {
-    // callServer
-    ToDoFactory.update({
-        todoId: $scope.editTodoModel._id
-      }, $scope.editTodoModel,
-      function(response) {
-        // success insert updated todo
-        $scope.editList.splice($scope.editIndex, 0, response);
-        // remove the existing one
-        $scope.editList.splice($scope.editIndex + 1, 1);
-        $scope.doCloseEditForm();
-
-      },
-      function(error) {
-        $scope.doCloseEditForm();
-        DebugFactory.logError(JSON.stringify(error));
-      });
-  };
-
-
-  $scope.doCloseEditForm = function() {
-    $scope.editModal.hide();
-    resetEditScope();
-  };
-
-
-
-  /**
-   * Delete a todo
-   */
-  $scope.doDeleteTodo = function(todo, list, index) {
-    // remove the todo from the client s lists
-    list.splice(index, 1);
-
-    // Call Server
-    ToDoFactory.delete({
-      'todoId': todo._id
-    }, function(success) {
-      // Successfully deleted the todo. No action required
-    }, function(error) {
-      logError(error);
-    });
-  };
-
-
-  /**
-   * Converting todo as container
-   */
-  $scope.doConvertTodo = function(todo, list, index) {
-    var confirmPopup = $ionicPopup.confirm({
-      title: '<h3>Confirm Conversion</h3>',
-      template: '<p>Sure to convert Todo</p><p>' + todo.summary + '</p><p>into a container?</p>'
-    });
-
-    confirmPopup.then(function(res) {
-      if (res) {
-        // if confirmed remove the item from the list
-        list.splice(index, 1);
-
-        // call server for conversion
-        ContainerFactory.save({}, {
-          'todoId': todo._id
-        }, function(converted) {
-          $rootScope.$broadcast('container:reload');
+      // Building parent assoziation list
+      // editParents contains as (key,summary) all possible checkboxes
+      // editChoosen contains only those that are checked.
+      for (var i = 0; i < $rootScope.containerList.length; i++) {
+        $scope.parents.push({
+          'id': $rootScope.containerList[i]._id,
+          'summary': $rootScope.containerList[i].summary
         });
       }
-    });
-  };
 
-
-
-  /** 
-   * createing a new entry
-   **/
-  $scope.doCreateTodo = function() {
-    $scope.createTodoModel = {
-      createAnother: false
-    };
-    $scope.createModal.show();
-  };
-
-
-
-
-  // if the create modal submits changes
-  $scope.doSubmitCreate = function() {
-    // callServer
-    $scope.createTodoModel.containerId = $rootScope.selectedContainerId;
-    ToDoFactory.save($scope.createTodoModel, function(todo) {
-      stateListAdd(todo);
-      var tmp = $scope.createTodoModel.createAnother;
-
-      if (tmp !== true) {
-        $scope.doCloseCreateForm();
-      } else {
-        $scope.createTodoModel = {
-          createAnother: true
-        };
+      // copy the already checked ones
+      for (var j = 0; j < todo.parents.length; j++) {
+        $scope.selection.push(todo.parents[j].parentId);
       }
-    }, function(error) {
-      $scope.createTodoModal = {
+
+      // copy the original maybe we want to cancel the adjustments
+      $scope.editTodoModel = angular.copy(todo);
+      $scope.editIndex = index;
+      $scope.editList = list;
+      $scope.editModal.show();
+    };
+
+
+    // If the edit modal submits changes
+    $scope.doSubmitChanges = function() {
+      // callServer
+      ToDoFactory.update({
+          todoId: $scope.editTodoModel._id
+        }, $scope.editTodoModel,
+        function(response) {
+          // success insert updated todo
+          $scope.editList.splice($scope.editIndex, 0, response);
+          // remove the existing one
+          $scope.editList.splice($scope.editIndex + 1, 1);
+          $scope.doCloseEditForm();
+
+        },
+        function(error) {
+          $scope.doCloseEditForm();
+          DebugFactory.logError(JSON.stringify(error));
+        });
+    };
+
+
+    $scope.doCloseEditForm = function() {
+      $scope.editModal.hide();
+      resetEditScope();
+    };
+
+
+
+    /**
+     * Delete a todo
+     */
+    $scope.doDeleteTodo = function(todo, list, index) {
+      // remove the todo from the client s lists
+      list.splice(index, 1);
+
+      // Call Server
+      ToDoFactory.delete({
+        'todoId': todo._id
+      }, function(success) {
+        // Successfully deleted the todo. No action required
+      }, function(error) {
+        logError(error);
+      });
+    };
+
+
+    /**
+     * Converting todo as container
+     */
+    $scope.doConvertTodo = function(todo, list, index) {
+      var confirmPopup = $ionicPopup.confirm({
+        title: '<h3>Confirm Conversion</h3>',
+        template: '<p>Sure to convert Todo</p><p>' + todo.summary + '</p><p>into a container?</p>'
+      });
+
+      confirmPopup.then(function(res) {
+        if (res) {
+          // if confirmed remove the item from the list
+          list.splice(index, 1);
+
+          // call server for conversion
+          ContainerFactory.save({}, {
+            'todoId': todo._id
+          }, function(converted) {
+            $rootScope.$broadcast('container:reload');
+          });
+        }
+      });
+    };
+
+
+
+    /** 
+     * createing a new entry
+     **/
+    $scope.doCreateTodo = function() {
+      $scope.createTodoModel = {
         createAnother: false
       };
-      DebugFactory.debug("Error: " + JSON.stringify(errror));
+      $scope.createModal.show();
+    };
+
+
+
+
+    // if the create modal submits changes
+    $scope.doSubmitCreate = function() {
+      // callServer
+      $scope.createTodoModel.containerId = $rootScope.selectedContainerId;
+      ToDoFactory.save($scope.createTodoModel, function(todo) {
+        stateListAdd(todo);
+        var tmp = $scope.createTodoModel.createAnother;
+
+        if (tmp !== true) {
+          $scope.doCloseCreateForm();
+        } else {
+          $scope.createTodoModel = {
+            createAnother: true
+          };
+        }
+      }, function(error) {
+        $scope.createTodoModal = {
+          createAnother: false
+        };
+        DebugFactory.debug("Error: " + JSON.stringify(errror));
+      });
+
+    };
+
+    $scope.doCloseCreateForm = function() {
+      $scope.createModal.hide();
+      $scope.createTodoModel = {
+        createAnother: false
+      };
+    };
+
+    // clean up if scope is destroyed
+    $scope.$on('$destroy', function() {
+      $scope.editModal.remove();
+      $scope.createModal.remove();
     });
 
-  };
-
-  $scope.doCloseCreateForm = function() {
-    $scope.createModal.hide();
-    $scope.createTodoModel = {
-      createAnother: false
-    };
-  };
-
-  // clean up if scope is destroyed
-  $scope.$on('$destroy', function() {
-    $scope.editModal.remove();
-    $scope.createModal.remove();
-  });
-
-}]);
+  }
+]);
