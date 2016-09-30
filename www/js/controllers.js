@@ -401,9 +401,8 @@ angular.module('starter.controllers', [])
     };
 
 
-
+    // If a checkbox was clicked we have to update the array
     $scope.toggleSelection = function toggleSelection(id) {
-      DebugFactory.debug("Param:" + id);
       var idx = $scope.selection.indexOf(id);
       // is currently selected
       if (idx > -1) {
@@ -415,6 +414,17 @@ angular.module('starter.controllers', [])
         $scope.selection.push(id);
       }
     };
+
+    var copyCheckboxArrayAsNewParents = function(todo, arrayWithParents){
+      // After the edit dialog the selection array holds all parents of 
+      // the todo that are choosed by the user. So we just copy them
+      todo.parents = [];
+      for(var i = 0; i < arrayWithParents.length; i++){
+        todo.parents.push({'parentId':arrayWithParents[i]});
+      }
+    };
+
+
 
     /**
      * Edit a todo
@@ -447,6 +457,11 @@ angular.module('starter.controllers', [])
 
     // If the edit modal submits changes
     $scope.doSubmitChanges = function() {
+
+      // we now copy the checkbox array back to 
+      // the copy to update the container assoziations as well
+      copyCheckboxArrayAsNewParents($scope.editTodoModel, $scope.selection);
+
       // callServer
       ToDoFactory.update({
           todoId: $scope.editTodoModel._id

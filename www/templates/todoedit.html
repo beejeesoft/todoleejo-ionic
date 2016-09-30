@@ -21,14 +21,15 @@
         <label class="item item-input">
           <textarea type="text" placeholder='Description' rows=5 ng-model="editTodoModel.description"></textarea>
         </label>
+      </div>
+      <div>
+        <label>Show in container</label>
 
 
         <label ng-repeat="parent in parents">
-  <input   type="checkbox"  name="selectedParents[]"  value="{{parent.id}}" ng-checked="selection.indexOf(parent.id) > -1"  ng-click="toggleSelection(parent.id)">{{parent.summary}}
-</label>
-        <div>
-          <p>{{selection}}</p>
-        </div>
+          <ion-checkbox  class="item-small" type="checkbox"  name="selectedParents[]"  value="{{parent.id}}" ng-checked="selection.indexOf(parent.id) > -1"  ng-click="toggleSelection(parent.id)">{{parent.summary}}</ion-checkbox>
+        </label>
+      </div>
       </div>
       <div class="bar bar-footer bar-dark">
         <button class="button button-full button-dark" type="submit">Save</button>
