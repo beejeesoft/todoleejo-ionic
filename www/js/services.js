@@ -16,6 +16,9 @@ angular.module('starter.services', ['ngResource'])
     },
     'save': {
       method: 'POST'
+    },
+    'delete': {
+      method: 'DELETE'
     }
 
   });
@@ -77,7 +80,7 @@ angular.module('starter.services', ['ngResource'])
   debugFac.debug = function(message) {
     $ionicPlatform.ready(function() {
       $cordovaToast
-        .show(message, 'long', 'bottom')
+        .show(message, 'short', 'bottom')
         .then(function(success) {
           // success
         }, function(error) {
@@ -88,6 +91,8 @@ angular.module('starter.services', ['ngResource'])
 
   return debugFac;
 }])
+
+
 
 .factory('AuthFactory', ['$resource', '$http', '$localStorage', '$rootScope', 'baseURL', '$ionicPopup', function($resource, $http, $localStorage, $rootScope, baseURL, $ionicPopup) {
 

@@ -13,32 +13,24 @@
 
   <ion-side-menu side="left">
     <ion-header-bar class="bar-stable">
-      <h1 class="title">Container</h1>
+       <button class="button button-icon button-clear ion-person-add" ng-if="!loggedIn" ng-click="register()"></button>
+       <button class="button button-icon button-clear ion-log-in" ng-if="!loggedIn" ng-click="login()"></button>
+       <button class="button button-icon button-clear ion-log-out" ng-if="loggedIn" ng-click="logOut()"></button>
     </ion-header-bar>
+    
+    
     <ion-content>
       <ion-list>
-        <ion-item class="item-divider color=" dark " ng-if="loggedIn ">
+       
+        <ion-item class="item-divider" ng-if="loggedIn">
           User: {{username}}
         </ion-item>
-         <ion-item menu-close class="button button-icon icon ion-folder " ng-if="loggedIn " href="'#/app/containers' ">Manage</ion-item>
-        <ion-item menu-close ng-repeat="container in containerList " ng-if="loggedIn " href="#/app/todos/{{container._id}} ">
+        <ion-item menu-close ng-if="loggedIn" href="#/app/containers/">
+          Manage
+        </ion-item>
+        <ion-item menu-close ng-repeat="container in containerList" ng-if="loggedIn" href="#/app/todos/{{container._id}}">
           {{container.summary}}
         </ion-item>
-
-        <ion-item class="item-divider " color="dark " ng-if="loggedIn ">
-          Admin Functions
-        </ion-item>
-
-        <ion-item menu-close ng-click="login() " ng-if="!loggedIn ">
-          Login
-        </ion-item>
-        <ion-item menu-close ng-click="logOut() " ng-if="loggedIn ">
-          Logout
-        </ion-item>
-        <ion-item menu-close ng-click="register() " nf-if="!loggedIn ">
-          Register
-        </ion-item>
-
 
       </ion-list>
     </ion-content>

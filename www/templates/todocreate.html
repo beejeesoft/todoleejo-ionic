@@ -12,17 +12,25 @@
       <div class="list">
 
         <label class="item item-input">
-           <input type="text" placeholder='Summary' ng-model="createTodoModel.summary">
+          <div role="alert">
+            <span class="error" ng-show="createForm.summary.$error.required">* </span>
+          </div>
+          <input type="text" name="summary" placeholder='Summary (required)' ng-model="createTodoModel.summary" required>
         </label>
+
+
+
+
+
+
 
         <label class="item item-input">
           <textarea type="text" placeholder='Description' rows=5 ng-model="createTodoModel.description"></textarea>
         </label>
 
-        <label class="item item-input">
-          <span class="input-label">Create another</span>
-          <ion-checkbox color="dark" ng-model="createTodoModel.createAnother"></ion-checkbox>
-        </label>
+
+        <ion-checkbox ng-true-value="true" ng-false-value="false" ng-model="createTodoModel.createAnother">Create another</ion-checkbox>
+
 
       </div>
 

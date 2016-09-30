@@ -1,25 +1,25 @@
 <ion-modal-view>
   <ion-header-bar>
-    <h1 class="title">Change ToDo</h1>
+    <h1 class="title">Change Container</h1>
     <div class="buttons">
       <button class="button button-icon icon button-clear button-dark ion-close" ng-click="doCloseEditForm()"></button>
       <button class="button button-icon icon button-clear button-dark ion-checkmark" ng-click="doSubmitChanges()"></button>
     </div>
   </ion-header-bar>
   <ion-content>
-    <form id="changeForm" name="changeForm" ng-submit="doSubmitChanges()">
+    <form id="editContainerForm" name="editContainerForm" ng-submit="doSubmitChanges()">
       <div class="list">
 
         <label class="item item-input">
           <div role="alert">
-            <span class="error" ng-show="changeForm.summary.$error.required">* </span>
+            <span class="error" ng-show="editContainerForm.summary.$error.required">* </span>
           </div>
-          <input type="text" name="summary" placeholder='Summary (required)' ng-model="editTodoModel.summary" required>
+          <input type="text" name="summary" placeholder='Summary (required)' ng-model="editContainerModel.summary" required>
         </label>
 
 
         <label class="item item-input">
-          <textarea type="text" placeholder='Description' rows=5 ng-model="editTodoModel.description"></textarea>
+          <textarea type="text" placeholder='Description' rows=5 ng-model="editContainerModel.description"></textarea>
         </label>
 
       </div>

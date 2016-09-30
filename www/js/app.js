@@ -54,7 +54,7 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
   })
 
   .state('app.containers', {
-    url: '/containers',
+    url: '/containers/',
     cache: false,
     views: {
       'menuContent': {

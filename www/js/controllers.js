@@ -55,42 +55,47 @@ angular.module('starter.controllers', [])
 
 
 
+  /**
+   * If login was successfull load the container list for the user
+   */
   $rootScope.$on('login:Successful', function() {
     $scope.loggedIn = AuthFactory.isAuthenticated();
     $scope.username = AuthFactory.getUsername();
     // Loading the containers for the logged in user
-    $scope.getContainerList(function() {
-      // success
-    }, function() {
-      // error
-    });
+    $scope.loadContainerList();
     DebugFactory.debug('Login Success');
 
   });
 
   /**
    * Getting the containers for the logged in user
-   * Callbacks can be used to watch the end of this operation.
    */
 
-  $scope.getContainerList = function(callback, error) {
-    ContainerFactory.query({}, function(response) {
-        $scope.containerList = response;
-        callback();
-      },
+  var moveStandardContainerToFront = function(list) {
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].isStandard === true) {
+        list.splice(0, 0, list.splice(i, 1)[0]);
+      }
+    }
+  };
+
+  $scope.loadContainerList = function() {
+    ContainerFactory.query({},
       function(response) {
-        DebugFactory.debug("Could not load Container " + JSON.stringify(response));
-        error();
+        moveStandardContainerToFront(response);
+        $rootScope.containerList = response;
+        $scope.containerList = $rootScope.containerList;
+        $rootScope.$broadcast('container:listLoaded');
+      },
+      function(error) {
+        DebugFactory.debug("Could not load Container " + JSON.stringify(error));
       });
   };
 
 
-  $rootScope.$on('container:getList', function(callback, error){
-    callback(containerList);
-  });
-
-  $rootScope.$on('container:reload', function(callback, error) {
-    $scope.getContainerList(callback, error);
+  $rootScope.$on('container:reload', function(event, data) {
+    DebugFactory.debug("OnReload");
+    $scope.loadContainerList();
   });
 
   $ionicModal.fromTemplateUrl('templates/register.html', {
@@ -128,20 +133,106 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('ContainerController', ['$scope', '$rootScope','ContainerFactory', '$state', '$stateParams', '$ionicPopup', 'baseURL', 'DebugFactory', function($scope, $rootScopeContainerFactory,$state, $stateParams, $ionicPopup, baseURL, DebugFactory) {
+.controller('ContainerController', ['$scope', '$rootScope', 'ContainerFactory', '$state', '$stateParams', 'DebugFactory', '$ionicModal',
+  function($scope, $rootScope, ContainerFactory, $state, $stateParams, DebugFactory, $ionicModal) {
 
-  
-  $scope.shouldShowDelete = false;
-  $scope.toggleShowDelete = function() {
-    return !$scope.shouldShowDelete;
-  };
+    $scope.containerList = $rootScope.containerList;
+    $scope.shouldShowDelete = false;
 
-  $rootScope.$broadcast('container:getList', function(response){
-    DebugFactory.debug("HAHAHAHAH");
-    $scope.containerList = response;
-  });
 
-}])
+    $scope.toggleShowDelete = function() {
+      $scope.shouldShowDelete = !$scope.shouldShowDelete;
+    };
+
+
+    $scope.doDeleteContainer = function(container, index) {
+      DebugFactory.debug("Delete");
+      $rootScope.containerList.splice(index, 1);
+
+      ContainerFactory.delete({
+        containerId: container._id
+      }, function(success) {
+        DebugFactory.debug("Successfully deleted container");
+      }, function(error) {
+        DebugFactory.debug("Error " + JSON.stringify(error));
+      });
+    };
+
+
+
+    // listening to event listLoaded to reference the list of containers
+    $rootScope.$on('container:listLoaded', function(event, list) {
+      DebugFactory.debug("Container Controller: Refreshing container list");
+      $scope.containerList = $rootScope.containerList;
+    });
+
+
+
+
+
+    /**
+     * Edit a container
+     */
+
+
+
+    // The model used in the model
+    $scope.editContainerModel = {};
+
+    // Create the create modal that we will use on create
+    $ionicModal.fromTemplateUrl('templates/containerEdit.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.editModal = modal;
+    });
+
+
+    // Called from the list on-hold
+    $scope.doEditContainer = function(container, index) {
+      DebugFactory.debug("EDIT : " + index + " ..." + container.summary);
+      $scope.editContainerModel = angular.copy(container);
+      $scope.editIndex = index;
+      $scope.editModal.show();
+    };
+
+    var resetEditScope = function() {
+      $scope.editContainerModel = {};
+      $scope.editIndex = -1;
+      $scope.editList = {};
+    };
+
+    // If the edit modal submits changes
+    $scope.doSubmitChanges = function() {
+      // callServer
+      ContainerFactory.update({
+          containerId: $scope.editContainerModel._id
+        }, $scope.editContainerModel,
+        function(response) {
+          // success insert updated todo
+          $rootScope.containerList.splice($scope.editIndex, 0, response);
+          // remove the existing one
+          $rootScope.containerList.splice($scope.editIndex + 1, 1);
+          $scope.doCloseEditForm();
+
+        },
+        function(error) {
+          $scope.doCloseEditForm();
+          DebugFactory.logError(JSON.stringify(error));
+        });
+    };
+
+
+    $scope.doCloseEditForm = function() {
+      $scope.editModal.hide();
+      resetEditScope();
+    };
+
+
+
+
+
+  }
+])
 
 .controller('ToDoController', ['$scope', '$rootScope', 'baseURL', 'ToDoFactory', '$state', '$stateParams', 'DebugFactory', 'TransitionFactory', '$ionicModal', '$ionicPopup', 'ContainerFactory', function($scope, $rootScope, baseURL, ToDoFactory, $state, $stateParams, DebugFactory, TransitionFactory, $ionicModal, $ionicPopup, ContainerFactory) {
 
@@ -216,7 +307,7 @@ angular.module('starter.controllers', [])
   };
 
 
-  // Calling get for the selected container
+  // Calling get for the selected container on startup
   // loading all of the todos belonging to this container and the logged in user
   ToDoFactory.query({
     containerId: $stateParams.containerId
@@ -226,7 +317,8 @@ angular.module('starter.controllers', [])
     DebugFactory.debug('Error loading todos: ' + JSON.stringify(error));
   });
 
-
+  // setting the selected container
+  $rootScope.selectedContainerId = $stateParams.containerId;
 
 
   // if arrows are pressed then we have to transfer the
@@ -235,8 +327,6 @@ angular.module('starter.controllers', [])
     // Remove the element from list for the duration of the update
     list.splice(index, 1);
     //DebugFactory.debug("SWIPE : " + direction + " ..." + index + " ..." + JSON.stringify(todo.summary));
-
-
 
     // Call the server to do the transition
     TransitionFactory.update({
@@ -264,9 +354,7 @@ angular.module('starter.controllers', [])
    * Moving around the list items by swapping their places
    */
   $scope.doReorderItem = function(item, list, fromIndex, toIndex) {
-    var tmp = list[toIndex];
-    list[toIndex] = list[fromIndex];
-    list[fromIndex] = tmp;
+    list.splice(toIndex, 0, list.splice(fromIndex, 1)[0]);
   };
 
 
@@ -295,6 +383,15 @@ angular.module('starter.controllers', [])
 
   // Scope Model used in the edit modal dialog
   $scope.editTodoModel = {};
+  $scope.editIndex = -1;
+  $scope.editList = {};
+
+  var resetEditScope = function() {
+    $scope.editTodoModel = {};
+    $scope.editIndex = -1;
+    $scope.editList = {};
+  };
+
 
 
   /**
@@ -302,9 +399,40 @@ angular.module('starter.controllers', [])
    */
   $scope.doEditTodo = function(todo, list, index) {
     DebugFactory.debug("EDIT : " + index + " ..." + todo.summary);
-    $scope.editTodoModel = todo;
+    $scope.editTodoModel = angular.copy(todo);
+    $scope.editIndex = index;
+    $scope.editList = list;
     $scope.editModal.show();
   };
+
+
+  // If the edit modal submits changes
+  $scope.doSubmitChanges = function() {
+    // callServer
+    ToDoFactory.update({
+        todoId: $scope.editTodoModel._id
+      }, $scope.editTodoModel,
+      function(response) {
+        // success insert updated todo
+        $scope.editList.splice($scope.editIndex, 0, response);
+        // remove the existing one
+        $scope.editList.splice($scope.editIndex + 1, 1);
+        $scope.doCloseEditForm();
+
+      },
+      function(error) {
+        $scope.doCloseEditForm();
+        DebugFactory.logError(JSON.stringify(error));
+      });
+  };
+
+
+  $scope.doCloseEditForm = function() {
+    $scope.editModal.hide();
+    resetEditScope();
+  };
+
+
 
   /**
    * Delete a todo
@@ -340,66 +468,58 @@ angular.module('starter.controllers', [])
 
         // call server for conversion
         ContainerFactory.save({}, {
-            'todoId': todo._id
-          }, function(converted) {
-            $rootScope.$broadcast('container:reload', function() {
-              //success
-            }, function() {
-              logError(error);
-            });
-          },
-          function(error) {
-            logError(error);
-          }
-        );
+          'todoId': todo._id
+        }, function(converted) {
+          $rootScope.$broadcast('container:reload');
+        });
       }
     });
   };
 
 
 
-  // createing a new entry
+  /** 
+   * createing a new entry
+   **/
   $scope.doCreateTodo = function() {
+    $scope.createTodoModel = {
+      createAnother: false
+    };
     $scope.createModal.show();
   };
 
 
-  // If the edit modal submits changes
-  $scope.doSubmitChanges = function() {
-    DebugFactory.debug("Submit Changes" + JSON.stringify($scope.editTodoModel));
 
-    // callServer
-
-    $scope.editModal.hide();
-  };
 
   // if the create modal submits changes
   $scope.doSubmitCreate = function() {
     // callServer
+    $scope.createTodoModel.containerId = $rootScope.selectedContainerId;
     ToDoFactory.save($scope.createTodoModel, function(todo) {
       stateListAdd(todo);
+      var tmp = $scope.createTodoModel.createAnother;
 
-      $scope.createTodoModel = {
-        createAnother: $scope.createTodoModel.createAnother
-      };
-
-      if ($scope.createTodoModel.createAnother !== true) {
-        doCloseCreateForm();
+      if (tmp !== true) {
+        $scope.doCloseCreateForm();
+      } else {
+        $scope.createTodoModel = {
+          createAnother: true
+        };
       }
     }, function(error) {
+      $scope.createTodoModal = {
+        createAnother: false
+      };
       DebugFactory.debug("Error: " + JSON.stringify(errror));
     });
 
   };
 
   $scope.doCloseCreateForm = function() {
-    DebugFactory.debug("Close Create");
     $scope.createModal.hide();
-  };
-
-  $scope.doCloseEditForm = function() {
-    DebugFactory.debug("Close Edit");
-    $scope.editModal.hide();
+    $scope.createTodoModel = {
+      createAnother: false
+    };
   };
 
   // clean up if scope is destroyed
@@ -408,29 +528,4 @@ angular.module('starter.controllers', [])
     $scope.createModal.remove();
   });
 
-}])
-
-
-.controller('PlaylistsCtrl', function($scope) {
-  $scope.playlists = [{
-    title: 'Reggae',
-    id: 1
-  }, {
-    title: 'Chill',
-    id: 2
-  }, {
-    title: 'Dubstep',
-    id: 3
-  }, {
-    title: 'Indie',
-    id: 4
-  }, {
-    title: 'Rap',
-    id: 5
-  }, {
-    title: 'Cowbell',
-    id: 6
-  }];
-})
-
-.controller('PlaylistCtrl', function($scope, $stateParams) {});
+}]);
