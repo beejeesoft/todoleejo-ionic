@@ -3,7 +3,6 @@
   "version": "1.1.1",
   "description": "todoleejo-ionic: An Ionic project",
   "dependencies": {
-    "cordova-plugin-toast": "node_modules/cordova-plugin-toast",
     "gulp": "^3.5.6",
     "gulp-concat": "^2.2.0",
     "gulp-minify-css": "^0.3.0",
