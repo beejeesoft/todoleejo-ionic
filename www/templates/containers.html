@@ -16,7 +16,10 @@
 
       <ion-list show-delete="shouldShowDelete" can-swipe="true">
         <ion-item ng-repeat="container in containerList" on-hold="doEditContainer(container, $index)">
-          {{container.summary}}
+          <div class="item-icon-left">
+            <i class="icon ion-folder"></i>
+            <p>{{container.summary}}</p>
+          </div>
           <ion-delete-button class="ion-trash-a" ng-if="!container.isStandard" ng-click="doDeleteContainer(container, $index)"></ion-delete-button>
         </ion-item>
       </ion-list>

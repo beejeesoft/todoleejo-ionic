@@ -14,47 +14,62 @@
   <ion-content>
 
     <div padding>
-      <button class="button button-clear button-dark" ng-click="taskState = 'open'"><i class="icon ion-clipboard"></i> Open</button>
-      <button class="button button-clear button-dark" ng-click="taskState = 'inProgress'"><i class="icon ion-wrench"></i> In Progress</button>
-      <button class="button button-clear button-dark" ng-click="taskState = 'done'"><i class="icon ion-checkmark"></i> Done</button>
+      <button class="button button-clear button-dark" ng-click="taskState = 'open'"><i class="icon ion-clipboard"></i></button>
+      <button class="button button-clear button-dark" ng-click="taskState = 'inProgress'"><i class="icon ion-wrench"></i></button>
+      <button class="button button-clear button-dark" ng-click="taskState = 'done'"><i class="icon ion-checkmark"></i></button>
+      <button class="button button-clear button-dark" ng-click="taskState = 'all'"><i class="icon ion-asterisk"></i></button>
     </div>
     <div>
-
+      <ion-list>
+        <ion-item item-right>{{getContainerName()}}</ion-item>
+      </ion-list>
       <!-- Open List -->
-      <ion-list show-delete="shouldShowDelete" show-reorder="shouldShowReorder" can-swipe="true" ng-if="taskState==='open'">
+      <ion-list show-delete="shouldShowDelete" show-reorder="shouldShowReorder" can-swipe="true" ng-if="taskState==='open' || taskState==='all'">
+        <ion-list-header>Open</ion-list-header>
         <ion-item ng-repeat="todo in todosOpen" on-hold="doEditTodo(todo,todosOpen,$index)">
-          {{todo.summary}}
+          <div class="item-icon-left">
+            <i class="icon ion-clipboard"></i>
+            <p>{{todo.summary}}</p>
+          </div>
           <ion-option-button class="button button-icon icon ion-folder ion-button-left" ng-click="doConvertTodo(todo,todosOpen,$index)"></ion-option-button>
           <ion-option-button class="button button-icon icon ion-chevron-right " ng-click="doSwipe(todo,todosOpen, 'right',$index)"></ion-option-button>
           <ion-delete-button class="ion-trash-a" ng-click="doDeleteTodo(todo,todosOpen, $index)"></ion-delete-button>
           <ion-reorder-button class="ion-navicon" on-reorder="doReorderItem(todo, todosOpen, $fromIndex, $toIndex) "></ion-reorder-button>
-
+          <ion-list-header></ion-list-header>
         </ion-item>
       </ion-list>
 
 
-      <!-- In Progress List --> 
-      <ion-list show-delete="shouldShowDelete" show-reorder="shouldShowReorder " can-swipe="true " ng-if="taskState==='inProgress'">
-        <ion-item ng-repeat="todo in todosInProgress" on-swipe-up="doConvertTodo()" on-hold="doEditTodo(todo,todosInProgress,$index)">
-          {{todo.summary}}
-          <ion-option-button class="button button-icon icon ion-folder ion-button-left" ng-click="doConvertTodo(todo,todosInProgress,$index)"></ion-option-button>
-          <ion-option-button class="button button-icon icon ion-chevron-left" ng-click="doSwipe(todo, todosInProgress, 'left',$index)"></ion-option-button>
-          <ion-option-button class="button button-icon icon ion-chevron-right" ng-click="doSwipe(todo, todosInProgress, 'right',$index)"></ion-option-button>
-          <ion-delete-button class="ion-trash-a" ng-click="doDeleteTodo(todo,todosInProgress, $index)"></ion-delete-button>
-          <ion-reorder-button class="ion-navicon" on-reorder="doReorderItem(todo, todosInProgress, $fromIndex, $toIndex)"></ion-reorder-button>
-
+      <!-- In Progress List -->
+      <ion-list show-delete="shouldShowDelete" show-reorder="shouldShowReorder " can-swipe="true " ng-if="taskState==='inProgress' || taskState==='all'" ">
+        <ion-list-header>In Progress</ion-list-header>
+        <ion-item ng-repeat="todo in todosInProgress " on-swipe-up="doConvertTodo() " on-hold="doEditTodo(todo,todosInProgress,$index) ">
+           <div class="item-icon-left">
+            <i class="icon ion-wrench"></i>
+            <p>{{todo.summary}}</p>
+          </div>
+          <ion-option-button class="button button-icon icon ion-folder ion-button-left " ng-click="doConvertTodo(todo,todosInProgress,$index) "></ion-option-button>
+          <ion-option-button class="button button-icon icon ion-chevron-left " ng-click="doSwipe(todo, todosInProgress, 'left',$index) "></ion-option-button>
+          <ion-option-button class="button button-icon icon ion-chevron-right " ng-click="doSwipe(todo, todosInProgress, 'right',$index) "></ion-option-button>
+          <ion-delete-button class="ion-trash-a " ng-click="doDeleteTodo(todo,todosInProgress, $index) "></ion-delete-button>
+          <ion-reorder-button class="ion-navicon " on-reorder="doReorderItem(todo, todosInProgress, $fromIndex, $toIndex) "></ion-reorder-button>
+          <ion-list-header></ion-list-header>
         </ion-item>
       </ion-list>
 
       <!-- Done List -->
-      <ion-list show-delete="shouldShowDelete" show-reorder="shouldShowReorder" can-swipe="true" ng-if="taskState==='done'">
+      <ion-list show-delete="shouldShowDelete " show-reorder="shouldShowReorder " can-swipe="true " ng-if="taskState==='done' || taskState==='all' "">
+        <ion-list-header>Done</ion-list-header>
         <ion-item ng-repeat=" todo in todosDone" on-swipe-up="doConvertTodo()" on-hold="doEditTodo(todo,todosDone,$index)">
-          {{todo.summary}}
+          <div class="item-icon-left">
+            <i class="icon ion-checkmark"></i>
+            <p>{{todo.summary}}</p>
+          </div>
           <ion-option-button class="button button-icon icon ion-folder ion-button-left" ng-click="doConvertTodo(todo,todosDone,$index)"></ion-option-button>
           <ion-option-button class="button button-icon icon ion-chevron-left" ng-click="doSwipe(todo, todosDone, 'left',$index)"></ion-option-button>
           <ion-delete-button class="ion-trash-a " ng-click="doDeleteTodo(todo,todosDone, $index) "></ion-delete-button>
           <ion-reorder-button class="ion-navicon " on-reorder="doReorderItem(todo, todosDone, $fromIndex, $toIndex) "></ion-reorder-button>
-
+          <ion-list-header></ion-list-header>
         </ion-item>
       </ion-list>
 

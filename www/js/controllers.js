@@ -240,7 +240,7 @@ angular.module('starter.controllers', [])
     $scope.baseURL = baseURL;
 
     // We start with the open tab visible
-    $scope.taskState = 'open';
+    $scope.taskState = 'all';
 
     // Markers for showing the buttons in the nav bar
     $scope.shouldShowDelete = false;
@@ -321,6 +321,15 @@ angular.module('starter.controllers', [])
     // setting the selected container
     $rootScope.selectedContainerId = $stateParams.containerId;
 
+    // reading the name of the selected container
+    $scope.getContainerName = function() {
+      for (var i = 0; i < $rootScope.containerList.length; i++) {
+        if ($rootScope.containerList[i]._id === $rootScope.selectedContainerId) {
+          return $rootScope.containerList[i].summary;
+        }
+      }
+      return "";
+    };
 
     // if arrows are pressed then we have to transfer the
     // todo in the appropriate state.
@@ -415,12 +424,14 @@ angular.module('starter.controllers', [])
       }
     };
 
-    var copyCheckboxArrayAsNewParents = function(todo, arrayWithParents){
+    var copyCheckboxArrayAsNewParents = function(todo, arrayWithParents) {
       // After the edit dialog the selection array holds all parents of 
       // the todo that are choosed by the user. So we just copy them
       todo.parents = [];
-      for(var i = 0; i < arrayWithParents.length; i++){
-        todo.parents.push({'parentId':arrayWithParents[i]});
+      for (var i = 0; i < arrayWithParents.length; i++) {
+        todo.parents.push({
+          'parentId': arrayWithParents[i]
+        });
       }
     };
 
